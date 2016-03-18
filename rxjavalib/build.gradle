@@ -1,12 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 22
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.bocai.boc_tongxing.myrxjavaexample"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
@@ -18,15 +16,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.1'
-    compile project(':rxjavalib')
+    compile 'io.reactivex:rxjava:1.1.1'
+    compile 'io.reactivex:rxandroid:1.1.0'
 }

@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.bocai.boc_tongxing.rxjavalib.rxutils.LogSub;
+import com.bocai.boc_tongxing.rxjavalib.rxutils.Rx;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Func2;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        Observable<String> o1 = Observable.just("h1", "h2");
+        /*Observable<String> o1 = Observable.just("h1", "h2");
         Observable<String> o2 = Observable.from(list);
         Observable.zip(o1, o2, new Func2<String, String, String>() {
             @Override
@@ -75,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 return s + s2;
             }
         }).subscribe(s -> print(s));
-        Observable.merge(o1,o2).subscribe(s->print(s));
+        Observable.merge(o1, o2).subscribe(s -> print(s));*/
+
+        Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(new LogSub<Integer>(s->{}));
+        Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(Rx.sub(s->{}));
     }
 
     private void print(String s) {

@@ -1,4 +1,48 @@
 # RxJava #
+## RxJavaLib ##
+自己封装的一个用于Rxjava的Module
+### Rx ###
+Subscriber必须要实现onError，否则出现错误会报OnErrorNotImplementedException错误  
+该方法可以自动实现onError log
+
+	public static <T> Subscriber sub(final Action1<? super T> onNext) {
+        if (onNext == null) {
+            throw new IllegalArgumentException("onNext can not be null");
+        }
+
+        return new Subscriber<T>() {
+
+            @Override
+            public final void onCompleted() {
+                // do nothing
+            }
+
+            @Override
+            public final void onError(Throwable e) {
+                Log.e(TAG, "onError: " + e.getMessage());
+            }
+
+            @Override
+            public final void onNext(T args) {
+                onNext.call(args);
+            }
+
+        };
+    }
+
+使用示例  
+
+	Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(Rx.sub(s->{}));
+
+### LogSub ###
+自带Log 的 Subscriber，也是用作解决Subscriber必须要实现onError，否则出现错误会报OnErrorNotImplementedException错误的情况  
+
+使用示例
+
+	Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(new LogSub<Integer>(s->{}));
+
+
+# 学习笔记 #
 ## 创建操作符 ##
 ### Just ###
 将一个或多个对象转换成发射这个或这些对象的一个Observable
