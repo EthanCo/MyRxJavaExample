@@ -6,11 +6,17 @@ import android.util.Log;
 
 import com.bocai.boc_tongxing.rxjavalib.rxutils.LogSub;
 import com.bocai.boc_tongxing.rxjavalib.rxutils.Rx;
+import com.fernandocejas.frodo.annotation.RxLogObservable;
+import com.fernandocejas.frodo.annotation.RxLogSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Func0;
+import rx.functions.Func1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,8 +85,63 @@ public class MainActivity extends AppCompatActivity {
         }).subscribe(s -> print(s));
         Observable.merge(o1, o2).subscribe(s -> print(s));*/
 
-        Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(new LogSub<Integer>(s->{}));
-        Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(Rx.sub(s->{}));
+        Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(new LogSub<Integer>(s -> {
+        }));
+        Observable.just("hello").map(s -> Integer.valueOf(s)).subscribe(Rx.sub(s -> {
+        }));
+
+        Observable<String> memory = Observable.just("memory:" + new Random().nextBoolean());
+        Observable<String> disk = Observable.just("disk:" + new Random().nextBoolean());
+        Observable<String> net = Observable.just("net:" + new Random().nextBoolean());
+        Observable.concat(memory, disk, net).first(new Func1<String, Boolean>() {
+            @Override
+            public Boolean call(String s) {
+                return Boolean.valueOf(s.substring(s.indexOf(":") + 1));
+            }
+        }).subscribe(Rx.sub(s -> Log.i("zhk", "res:" + s)));
+
+        getIntegerObs().subscribe(new MySubscribe<Integer>());
+
+        String value = "hello";
+        Observable.defer(new Func0<Observable<String>>() {
+            @Override
+            public Observable<String> call() {
+                return Observable.just(value);
+            }
+        });
+
+
+    }
+
+    @RxLogObservable
+    public Observable<Integer> getIntegerObs() {
+        return getObsTest().map(s -> "XOOEEEE" + s + "GOGOGO")
+                .map(s -> "--->" + s + "<-----")
+                .map(s -> Integer.valueOf(s));
+    }
+
+    @RxLogObservable
+    private Observable<String> getObsTest() {
+        return Observable.just("hello world !");
+    }
+
+    @RxLogSubscriber
+    class MySubscribe<T> extends Subscriber<T> {
+
+        @Override
+        public void onCompleted() {
+            Log.i("Frodo", "onCompleted : ");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e("Frodo", "onError : " + e.getMessage());
+        }
+
+        @Override
+        public void onNext(T t) {
+            Log.i("Frodo", "onNext : " + t.toString());
+        }
     }
 
     private void print(String s) {
